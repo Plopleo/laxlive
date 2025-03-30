@@ -99,9 +99,8 @@ export default function Home() {
         <p>
           Made by{' '}
           <a
-            href="https://twitter.com/plopleo"
+            href="https://leopold.dev/"
             target="_blank"
-            rel="noopener noreferrer"
             className="hover:underline"
           >
             Léopold
