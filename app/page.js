@@ -26,9 +26,8 @@ export default function Home() {
 
   return (
     <main className="space-y-8">
-      <div className="relative">
-        {/* Volume Control - Absolute positioned in top right */}
-        <div className="absolute top-0 right-0 flex items-center gap-2 p-4">
+      <div className="flex flex-col-reverse md:flex-col">
+        <div className="flex justify-center md:justify-end items-center gap-2 p-4">
           <div className="flex items-center gap-2 w-30">
             <button onClick={handleIconClick} className="hover:opacity-80 hover:cursor-pointer transition-opacity">
               {volume == 0 ? (
@@ -52,7 +51,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Centered Title Block */}
+        {/* Title Block */}
         <div className="text-center mx-auto max-w-2xl">
           <h1 className="text-4xl font-bold mb-2">LAX Live</h1>
           <p className="text-lg text-base-content/70 mt-2">Watch live streams from Los Angeles International Airport</p>
