@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { getFlights } from '../app/actions';
+import { airports } from '../data/airports';
 
-export default function TableFlights() {
+export default function TableFlights({ airportId }) {
     const [arrivals, setArrivals] = useState([]);
     const [departures, setDepartures] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -13,14 +14,15 @@ export default function TableFlights() {
     const fetchFlights = async () => {
         setIsLoading(true);
         try {
-            const data = await getFlights();
+            const airport = airports.find(a => a.id === airportId);
+            const data = await getFlights(airportId, airport.coordinates);
             setLastFetchTime(new Date());
 
-            // Filter for arrivals to LAX
-            const laxArrivals = Object.values(data)
+            // Filter for arrivals to selected airport
+            const airportArrivals = Object.values(data)
                 .filter(flight => {
                     if (!Array.isArray(flight)) return false;
-                    return flight[12] === 'LAX' && flight[11] !== 'LAX';
+                    return flight[12] === airportId && flight[11] !== airportId;
                 })
                 .map(flight => ({
                     time: flight[10] || 'N/A',
@@ -45,11 +47,11 @@ export default function TableFlights() {
                 })
                 .slice(0, 20);
 
-            // Filter for departures from LAX
-            const laxDepartures = Object.values(data)
+            // Filter for departures from selected airport
+            const airportDepartures = Object.values(data)
                 .filter(flight => {
                     if (!Array.isArray(flight)) return false;
-                    return flight[11] === 'LAX' && flight[12] !== 'LAX';
+                    return flight[11] === airportId && flight[12] !== airportId;
                 })
                 .map(flight => ({
                     time: flight[10] || 'N/A',
@@ -74,8 +76,8 @@ export default function TableFlights() {
                 })
                 .slice(0, 20);
 
-            setArrivals(laxArrivals);
-            setDepartures(laxDepartures);
+            setArrivals(airportArrivals);
+            setDepartures(airportDepartures);
             setError(null);
         } catch (error) {
             console.error('Error fetching flights:', error);
@@ -93,7 +95,7 @@ export default function TableFlights() {
         const interval = setInterval(fetchFlights, 60000); // Update every minute
 
         return () => clearInterval(interval);
-    }, []);
+    }, [airportId]); // Add airportId as a dependency
 
     if (error) {
         return (

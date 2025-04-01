@@ -2,14 +2,14 @@
 
 import { useState, useEffect } from 'react';
 
-export default function ClockLAX() {
+export default function AirportClock({ airportId, city, timezone }) {
     const [time, setTime] = useState('');
 
     useEffect(() => {
         function updateTime() {
             const now = new Date();
             const options = {
-                timeZone: 'America/Los_Angeles',
+                timeZone: timezone,
                 hour: '2-digit',
                 minute: '2-digit',
                 second: '2-digit',
@@ -22,11 +22,11 @@ export default function ClockLAX() {
         const interval = setInterval(updateTime, 1000);
 
         return () => clearInterval(interval);
-    }, []);
+    }, [timezone]);
 
     return (
         <div className="text-lg font-medium text-base-content/70">
-            Los Angeles: {time}
+            {city}: {time}
         </div>
     );
 } 

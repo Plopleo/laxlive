@@ -15,34 +15,9 @@ export default function YouTubePlayer({ videoId, isMuted, volume }) {
 
         // Initialize player when API is ready
         window.onYouTubeIframeAPIReady = () => {
-            if (playerRef.current) {
-                playerRef.current.destroy();
+            if (videoId) {
+                initializePlayer();
             }
-
-            playerRef.current = new window.YT.Player(containerRef.current, {
-                videoId: videoId,
-                playerVars: {
-                    autoplay: 1,
-                    mute: 1, // Always start muted for autoplay
-                    controls: 0,
-                    disablekb: 0,
-                    enablejsapi: 1,
-                    fs: 1,
-                    modestbranding: 1,
-                    playsinline: 1,
-                    rel: 0,
-                },
-                events: {
-                    onReady: (event) => {
-                        const player = event.target;
-                        player.setVolume(volume);
-                        if (!isMuted) {
-                            player.unMute();
-                        }
-                        player.playVideo();
-                    }
-                }
-            });
         };
 
         return () => {
@@ -52,7 +27,47 @@ export default function YouTubePlayer({ videoId, isMuted, volume }) {
             }
             delete window.onYouTubeIframeAPIReady;
         };
-    }, [videoId]);
+    }, []); // Only run once on mount
+
+    // Separate effect for player initialization
+    useEffect(() => {
+        if (window.YT && window.YT.Player && videoId) {
+            initializePlayer();
+        }
+    }, [videoId]); // Re-run when videoId changes
+
+    const initializePlayer = () => {
+        if (!videoId) return; // Don't initialize if no videoId
+
+        if (playerRef.current) {
+            playerRef.current.destroy();
+        }
+
+        playerRef.current = new window.YT.Player(containerRef.current, {
+            videoId: videoId,
+            playerVars: {
+                autoplay: 1,
+                mute: 1, // Always start muted for autoplay
+                controls: 1,
+                disablekb: 0,
+                enablejsapi: 1,
+                fs: 1,
+                modestbranding: 1,
+                playsinline: 1,
+                rel: 0,
+            },
+            events: {
+                onReady: (event) => {
+                    const player = event.target;
+                    player.setVolume(volume);
+                    if (!isMuted) {
+                        player.unMute();
+                    }
+                    player.playVideo();
+                }
+            }
+        });
+    };
 
     // Handle volume and mute changes
     useEffect(() => {
