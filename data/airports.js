@@ -8,6 +8,7 @@ export const airports = [
       lat: 33.9425,
       lon: -118.4081
     },
+    youtubeChannelId: 'UCZpB0MKAHs4k_TTpHllCLSQ',
     youtubeVideoId: '69lhJSzgfK8',
     flightRadarZoom: 13,
     timezone: 'America/Los_Angeles'
@@ -21,7 +22,7 @@ export const airports = [
       lat: 51.4700,
       lon: -0.4543
     },
-    youtubeVideoId: '0x5Jh5muCmM',
+    youtubeChannelId: 'UC6q_hfBThkGdmQ5Vb4kWjWA',
     flightRadarZoom: 13,
     timezone: 'Europe/London'
   }

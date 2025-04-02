@@ -110,6 +110,7 @@ export default function AirportViewer() {
               <div className="aspect-video">
                 <YouTubePlayer 
                   videoId={selectedAirport.youtubeVideoId} 
+                  channelId={selectedAirport.youtubeChannelId}
                   isMuted={volume === 0} 
                   volume={volume} 
                 />

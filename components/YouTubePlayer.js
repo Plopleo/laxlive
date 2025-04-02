@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 
-export default function YouTubePlayer({ videoId, isMuted, volume }) {
+export default function YouTubePlayer({ videoId, channelId, isMuted, volume }) {
     const playerRef = useRef(null);
     const containerRef = useRef(null);
 
@@ -15,7 +15,7 @@ export default function YouTubePlayer({ videoId, isMuted, volume }) {
 
         // Initialize player when API is ready
         window.onYouTubeIframeAPIReady = () => {
-            if (videoId) {
+            if (videoId || channelId) {
                 initializePlayer();
             }
         };
@@ -31,31 +31,39 @@ export default function YouTubePlayer({ videoId, isMuted, volume }) {
 
     // Separate effect for player initialization
     useEffect(() => {
-        if (window.YT && window.YT.Player && videoId) {
+        if (window.YT && window.YT.Player && (videoId || channelId)) {
             initializePlayer();
         }
-    }, [videoId]); // Re-run when videoId changes
+    }, [videoId, channelId]); // Re-run when videoId or channelId changes
 
     const initializePlayer = () => {
-        if (!videoId) return; // Don't initialize if no videoId
+        if (!videoId && !channelId) return; // Don't initialize if no videoId or channelId
 
         if (playerRef.current) {
             playerRef.current.destroy();
         }
 
+        const playerVars = {
+            autoplay: 1,
+            mute: 1, // Always start muted for autoplay
+            controls: 1,
+            disablekb: 0,
+            enablejsapi: 1,
+            fs: 1,
+            modestbranding: 1,
+            playsinline: 1,
+            rel: 0,
+        };
+
+        // If we have a channelId, load the live stream
+        if (channelId) {
+            playerVars.list = `UU${channelId.slice(2)}`; // Convert channel ID to playlist ID
+            playerVars.listType = 'live';
+        }
+
         playerRef.current = new window.YT.Player(containerRef.current, {
-            videoId: videoId,
-            playerVars: {
-                autoplay: 1,
-                mute: 1, // Always start muted for autoplay
-                controls: 1,
-                disablekb: 0,
-                enablejsapi: 1,
-                fs: 1,
-                modestbranding: 1,
-                playsinline: 1,
-                rel: 0,
-            },
+            videoId: videoId || undefined,
+            playerVars: playerVars,
             events: {
                 onReady: (event) => {
                     const player = event.target;
